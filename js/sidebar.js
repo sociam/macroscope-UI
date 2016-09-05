@@ -4,6 +4,38 @@ var dta_name = "";
 var dta_desc = "";
 var vizs=[];
 
+
+	socket.on("returnedRoomID", function(data){
+		var newID=data;
+		var date= new Date();
+		var newRoom = {
+				"roomID":newID,
+				"roomName" : dta_name,
+				"roomDesc" : dta_desc,
+				"currentDate" : date,
+				"attached_vizs" : vizs,
+				"active" : true
+			}
+		//let the server know it can now create the room obj and add it to the db
+		socket.emit("newRoom", newRoom);
+	});
+	
+	socket.on("roomCreated", function(data){
+		//updata the active room panel :D
+		socket.emit("getActiveRooms", "");
+//		$('a[href="#tab1"]').click();
+//		uncheckCheckBoxes();
+	});
+	
+	socket.on('activeRooms', function(data){
+		if(data.length>0){
+			displayNewRooms(data);
+		}else{
+			console.log("data received is empty");
+		}
+		
+		
+	});
 // -----------------------------------------------------------------
 // THINGS TO DO WITH THE INTERFACE!
 
@@ -29,24 +61,24 @@ $('#createRoom').on('click', function(event) {
 
 		$("#addVizsBtn").off('click').on('click', function(e) {
 			e.preventDefault();
-			// redirected to the the 'active rooms' panel where the new room
-			// should be displayed
+			// redirected to the the 'active rooms' panel where the new room should be displayed
 
+			
 			vizs = getAllCheckedVizs();
 
-			var newRoom = {
-				"roomName" : dta_name,
-				"roomDesc" : dta_desc,
-				"currentDate" : new Date(),
-				"attached_vizs" : vizs,
-				"active" : true
-			}
+//			var newRoom = {
+//				"roomName" : dta_name,
+//				"roomDesc" : dta_desc,
+//				"currentDate" : new Date(),
+//				"attached_vizs" : vizs,
+//				"active" : true
+//			}
 
-			socket.emit("updateRoom", newRoom);
+			socket.emit("updateRoom", "");
 			// socket.emit("newRoom", newRoom);
 
-			$('a[href="#tab1"]').click();
-			uncheckCheckBoxes();
+//			$('a[href="#tab1"]').click();
+//			uncheckCheckBoxes();
 
 		});
 
@@ -54,6 +86,31 @@ $('#createRoom').on('click', function(event) {
 
 	}
 });
+
+
+//receives an array of active rooms??
+function displayNewRooms(data){
+	   
+	var html ='';
+	console.log("function hereeeeeeeeeeeeee");
+	$("#rooms div").empty();
+
+	   for(i =0; i <data.length; i++){
+			
+			html = html
+					+'<div class=\"col-md-4\">'
+						+'<a href="#">'
+						+'<p>'+ "Room_" + data[i].roomID +'</p>' 
+						+ '<img src=\"http://placehold.it/160x100\" style="width: 150px; height: 150px">'
+						+ '</a>'
+					+ '</div>' ;
+		
+	    }
+	    $('#rooms div:first').after(html);
+	    console.log("inside function");
+	    $('a[href="#tab1"]').click();
+		uncheckCheckBoxes();
+ }
 
 // colour check boxes for visualizations(see addViz modal)
 $(function() {
