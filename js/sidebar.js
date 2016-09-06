@@ -1,5 +1,11 @@
 var socket = io.connect('http://localhost:9001');
 
+function initialize(){
+	
+	socket.emit("getActiveRooms", "");
+}
+
+
 var dta_name = "";
 var dta_desc = "";
 var vizs=[];
@@ -30,6 +36,8 @@ var vizs=[];
 	socket.on('activeRooms', function(data){
 		if(data.length>0){
 			displayNewRooms(data);
+			$('a[href="#tab1"]').click();
+			uncheckCheckBoxes();
 		}else{
 			console.log("data received is empty");
 		}
@@ -88,6 +96,7 @@ $('#createRoom').on('click', function(event) {
 });
 
 
+
 //receives an array of active rooms??
 function displayNewRooms(data){
 	   
@@ -108,8 +117,7 @@ function displayNewRooms(data){
 	    }
 	    $('#rooms div:first').after(html);
 	    console.log("inside function");
-	    $('a[href="#tab1"]').click();
-		uncheckCheckBoxes();
+	    
  }
 
 // colour check boxes for visualizations(see addViz modal)
