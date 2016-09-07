@@ -41,9 +41,15 @@ var vizs=[];
 		}else{
 			console.log("data received is empty");
 		}
-		
-		
+				
 	});
+	
+	socket.on('roomDetails', function(data){
+		console.log("roomDetails received roomName is: "+ data.roomName);
+		updateModalContent(data);
+		$("#roomModal").modal();
+		
+	})
 // -----------------------------------------------------------------
 // THINGS TO DO WITH THE INTERFACE!
 
@@ -52,6 +58,32 @@ $("#menu-toggle").click(function(e) {
 	e.preventDefault();
 	$("#wrapper").toggleClass("toggled");
 });
+
+$('roomInstance').on('click',function(e){
+	e.preventDefault();
+	console.log("inside roomInstace on click");
+//	var roomName='';
+//	var text='';
+//	text= myfunction(this);
+//	var id = $("p:contains('" + someString + "')").attr("id");
+//	console.log(text+ "     "+ id );
+	
+	//emit the roomID. BUT How do you get the room id?
+	//socket.emit("getRoomDetails","");
+	//$("#roomModal").modal();
+});
+
+function myFunction(elem){
+	console.log("myFunction is working");
+	//var id=elem.attr('id');
+	try{
+		var str = elem;
+		socket.emit("getRoomDetails", elem);
+		console.log(str);
+	}catch(e){
+		console.log("myFunction is not displaying the roomName");
+	}
+}
 
 $('#createRoom').on('click', function(event) {
 	event.preventDefault();
@@ -71,23 +103,11 @@ $('#createRoom').on('click', function(event) {
 			e.preventDefault();
 			// redirected to the the 'active rooms' panel where the new room should be displayed
 
-			
+			//update vizs for the current room
 			vizs = getAllCheckedVizs();
 
-//			var newRoom = {
-//				"roomName" : dta_name,
-//				"roomDesc" : dta_desc,
-//				"currentDate" : new Date(),
-//				"attached_vizs" : vizs,
-//				"active" : true
-//			}
 
 			socket.emit("updateRoom", "");
-			// socket.emit("newRoom", newRoom);
-
-//			$('a[href="#tab1"]').click();
-//			uncheckCheckBoxes();
-
 		});
 
 	} else {
@@ -108,8 +128,8 @@ function displayNewRooms(data){
 			
 			html = html
 					+'<div class=\"col-md-4\">'
-						+'<a href="#">'
-						+'<p>'+ "Room_" + data[i].roomID +'</p>' 
+						+'<a href="#" class="roomLayout" onclick="myFunction('+data[i].roomID+')">'
+						+'<p  class="center">'+ data[i].roomName +'</p>' 
 						+ '<img src=\"http://placehold.it/160x100\" style="width: 150px; height: 150px">'
 						+ '</a>'
 					+ '</div>' ;
@@ -119,6 +139,45 @@ function displayNewRooms(data){
 	    console.log("inside function");
 	    
  }
+
+//should receive a Room object with room name, id etc etc
+function updateModalContent(data){
+	var title=''; 
+	var desc='';
+	var htmlRooms='';
+	var footer='';
+	//header with the roomName
+	$("#roomModalH h4").empty();
+	//body paragraph w description
+	$("#roomModalB p").empty();
+	//div for pictures of the current vizs
+	$("#roomModalB div").empty();
+	//footer with JoinRoom button/modify or delete room button depending on the user?
+	//$("#roomModalF button").empty();
+	
+	title= title + '<h4 class="modal-title">'+data.roomName+'</h4>';
+	desc= desc + '<p>'+ data.description + '</p>';
+	
+	
+	for (i =0; i<data.attached_vizs.length; i++){
+		htmlRooms = htmlRooms
+		+'<div class=\"col-md-4\">'
+			+'<a href="#" class="img">'
+			+'<p class="center">'+  data.attached_vizs[i] +'</p>' 
+			+ '<img src=\"http://placehold.it/160x100\" style="width: 150px; height: 150px">'
+			+ '</a>'
+		+ '</div>' ;
+	}
+	
+	//<!-- don't forget to add later : data-dismiss="modal" -->
+	//footer = footer + '<button type="button" class="btn btn-default">Join Room</button>'
+	
+	$('#roomModalH button').after(title);
+	$('#roomModalB #descDiv').after(desc);
+	$('#roomModalB #vizDiv').after(htmlRooms);
+	//$("#roomModalF #footerDiv").after(footer);
+	
+}
 
 // colour check boxes for visualizations(see addViz modal)
 $(function() {
