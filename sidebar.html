@@ -65,7 +65,7 @@
 								<h1 class="text-center">Active Rooms</h1>
 								<hr class="star-light">
 								<br></br>
-								<p>Here are the currently active rooms:</p>
+								<h3>Here are the currently active rooms:</h3>
 								<br></br>
 							</div>
 						</div>
@@ -90,15 +90,22 @@
 						        <div class="modal-body" id="roomModalB">
 						        	<!-- missing p -->
 						        	<div class="row" id="descDiv">
-						        	
+						        		
+						    						        	
 						        	</div>
+						        	
 						        	<div class="row" id="vizDiv">
+						        		<h4>Visualizations in this rooms:</h4>
+						        		
+						        		<div class="row">
+						        		
+						        		</div>
 						        	
 						        	</div>
 						        </div>
 						        <div class="modal-footer" id="roomModalF">
 						        	<div  class="row" id="footerDiv">
-						        		<button type="button" class="btn btn-default">Join Room</button>
+						        	
 						        	</div>
 						        	
 						        </div>
@@ -152,81 +159,41 @@
 													<div class="row">
 														<div class="col-sm-3">
 															<div class="col-sm-12 border-box-black">
-																<img src="http://placehold.it/160x100"
+																<img src="http://localhost:9001/Wikipedia_Map" alt="wikipediaMap" style="width:160px;height:100px;"
 																	class="img-responsive img-radio">
 																<div class="btm-space-10">
-																	Viz1 <input type="checkbox"
-																		class="pack_item pull-right" value="viz1"/>
+																	Wikipedia Map <input type="checkbox"
+																		class="pack_item pull-right" value="Wikipedia_Map"/>
 																</div>
 															</div>
 														</div>
 														<div class="col-sm-3">
 															<div class="col-sm-12 border-box-black">
-																<img src="http://placehold.it/160x100"
+																<img src="http://localhost:9001/Twitter_Cascades" alt="twitterCascades" style="width:160px;height:100px;"
 																	class="img-responsive img-radio">
 																<div class="btm-space-10">
-																	Viz2 <input type="checkbox"
-																		class="pack_item pull-right" value="viz2"/>
+																	Twitter Cascades <input type="checkbox"
+																		class="pack_item pull-right" value="Twitter_Cascades"/>
 																</div>
 															</div>
 														</div>
 														<div class="col-sm-3">
 															<div class="col-sm-12 border-box-black">
-																<img src="http://placehold.it/160x100"
+																<img src="http://localhost:9001/Deleted_Tweets" alt="deletedTweets" style="width:160px;height:100px;"
 																	class="img-responsive img-radio">
 																<div class="btm-space-10">
-																	Viz3 <input type="checkbox"
-																		class="pack_item pull-right" value="viz3"/>
+																	Deleted Tweets <input type="checkbox"
+																		class="pack_item pull-right" value="Deleted_Tweets"/>
 																</div>
 															</div>
 														</div>
 														<div class="col-sm-3">
 															<div class="col-sm-12 border-box-black">
-																<img src="http://placehold.it/160x100"
+																<img src="http://localhost:9001/Filter" alt="ms-Filter" style="width:160px;height:100px;"
 																	class="img-responsive img-radio">
 																<div class="btm-space-10">
-																	Viz4 <input type="checkbox"
-																		class="pack_item pull-right" value="viz4"/>
-																</div>
-															</div>
-														</div>
-														<div class="col-sm-3 space-20">
-															<div class="col-sm-12 border-box-black">
-																<img src="http://placehold.it/160x100"
-																	class="img-responsive img-radio">
-																<div class="btm-space-10">
-																	Viz5 <input type="checkbox"
-																		class="pack_item pull-right" value="viz5"/>
-																</div>
-															</div>
-														</div>
-														<div class="col-sm-3 space-20">
-															<div class="col-sm-12 border-box-black">
-																<img src="http://placehold.it/160x100"
-																	class="img-responsive img-radio">
-																<div class="btm-space-10">
-																	Viz6 <input type="checkbox"
-																		class="pack_item pull-right" value="viz6"/>
-																</div>
-															</div>
-														</div>
-														<div class="col-sm-3 space-20">
-															<div class="col-sm-12 border-box-black">
-																<img src="http://placehold.it/160x100"
-																	class="img-responsive img-radio">
-																<div class="btm-space-10">
-																	Viz7 <input type="checkbox"
-																		class="pack_item pull-right" value="viz7"/>
-																</div>
-															</div>
-														</div>
-														<div class="col-sm-3 space-20">
-															<div class="col-sm-12 border-box-black">
-																<img src="http://placehold.it/160x100"
-																	class="img-responsive img-radio">
-																<div class="btm-space-10">
-																	Viz8 <input type="checkbox"
-																		class="pack_item pull-right" value="viz8"/>
+																	MS-Filter <input type="checkbox"
+																		class="pack_item pull-right filter" value="Filter" id="filterCheckbox" checked="checked" disabled/>
 																</div>
 															</div>
 														</div>

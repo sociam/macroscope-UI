@@ -9,6 +9,7 @@ function initialize(){
 var dta_name = "";
 var dta_desc = "";
 var vizs=[];
+var linkArray = ["http://www.java2s.com/", "http://www.java2s.com/"];
 
 
 	socket.on("returnedRoomID", function(data){
@@ -22,15 +23,16 @@ var vizs=[];
 				"attached_vizs" : vizs,
 				"active" : true
 			}
-		//let the server know it can now create the room obj and add it to the db
+		// let the server know it can now create the room obj and add it to the
+		// db
 		socket.emit("newRoom", newRoom);
 	});
 	
 	socket.on("roomCreated", function(data){
-		//updata the active room panel :D
+		// updata the active room panel :D
 		socket.emit("getActiveRooms", "");
-//		$('a[href="#tab1"]').click();
-//		uncheckCheckBoxes();
+// $('a[href="#tab1"]').click();
+// uncheckCheckBoxes();
 	});
 	
 	socket.on('activeRooms', function(data){
@@ -50,6 +52,17 @@ var vizs=[];
 		$("#roomModal").modal();
 		
 	})
+	
+	socket.on('vizsURLS', function(data){
+		linkArray=[];
+		
+		for(i=0; i<data.vizDocs.length; i++){
+			var url=data.vizDocs[i].URL + "?room=" + data.roomID + "&vizName=" + data.vizDocs[i].vizName;
+			linkArray[i]=url;
+		}
+		
+		open_win();
+	});
 // -----------------------------------------------------------------
 // THINGS TO DO WITH THE INTERFACE!
 
@@ -59,23 +72,10 @@ $("#menu-toggle").click(function(e) {
 	$("#wrapper").toggleClass("toggled");
 });
 
-$('roomInstance').on('click',function(e){
-	e.preventDefault();
-	console.log("inside roomInstace on click");
-//	var roomName='';
-//	var text='';
-//	text= myfunction(this);
-//	var id = $("p:contains('" + someString + "')").attr("id");
-//	console.log(text+ "     "+ id );
-	
-	//emit the roomID. BUT How do you get the room id?
-	//socket.emit("getRoomDetails","");
-	//$("#roomModal").modal();
-});
-
+//get room's details from server when room is clicked
 function myFunction(elem){
 	console.log("myFunction is working");
-	//var id=elem.attr('id');
+	// var id=elem.attr('id');
 	try{
 		var str = elem;
 		socket.emit("getRoomDetails", elem);
@@ -99,25 +99,53 @@ $('#createRoom').on('click', function(event) {
 		// pop up the modal
 		$("#myModal").modal();
 
-		$("#addVizsBtn").off('click').on('click', function(e) {
-			e.preventDefault();
-			// redirected to the the 'active rooms' panel where the new room should be displayed
-
-			//update vizs for the current room
-			vizs = getAllCheckedVizs();
-
-
-			socket.emit("updateRoom", "");
-		});
+		
 
 	} else {
 
 	}
 });
 
+$("#addVizsBtn").off('click').on('click', function(e) {
+	e.preventDefault();
+	// redirected to the the 'active rooms' panel where the new room
+	// should be displayed
+
+	// update vizs for the current room
+	vizs = getAllCheckedVizs();
 
 
-//receives an array of active rooms??
+	socket.emit("updateRoom", "");
+});
+
+
+function getVizURLs(roomID){
+	console.log("inside getVizURLS()");
+	
+	try{
+		socket.emit("getURLS", roomID);
+	}catch(e){
+		console.log("getVizURLS not working");
+	}
+	
+}
+
+
+
+
+// open new tabs with the vizs
+function open_win() {
+	
+	for (var i = 0; i < linkArray.length; i++) {
+	    // will open each link in the current window
+		window.open(linkArray[i]);
+	}
+
+}
+
+
+
+// receives an array of active rooms??
 function displayNewRooms(data){
 	   
 	var html ='';
@@ -127,10 +155,11 @@ function displayNewRooms(data){
 	   for(i =0; i <data.length; i++){
 			
 			html = html
+					
 					+'<div class=\"col-md-4\">'
 						+'<a href="#" class="roomLayout" onclick="myFunction('+data[i].roomID+')">'
-						+'<p  class="center">'+ data[i].roomName +'</p>' 
-						+ '<img src=\"http://placehold.it/160x100\" style="width: 150px; height: 150px">'
+						+'<p style="text-align: center">'+ data[i].roomName +'</p>' 
+						+ '<img src=\"roomimg.png\" style="width: 180px; height: 150px">'
 						+ '</a>'
 					+ '</div>' ;
 		
@@ -140,23 +169,25 @@ function displayNewRooms(data){
 	    
  }
 
-//should receive a Room object with room name, id etc etc
+// should receive a Room object with room name, id etc etc
 function updateModalContent(data){
 	var title=''; 
 	var desc='';
 	var htmlRooms='';
 	var footer='';
-	//header with the roomName
-	$("#roomModalH h4").empty();
-	//body paragraph w description
+	// header with the roomName
+	$("#roomModalH h3").empty();
+	// body paragraph w description
 	$("#roomModalB p").empty();
-	//div for pictures of the current vizs
-	$("#roomModalB div").empty();
-	//footer with JoinRoom button/modify or delete room button depending on the user?
-	//$("#roomModalF button").empty();
+	// div for pictures of the current vizs
+	//$("#roomModalB div").empty();
+	$('#vizDiv div').empty();
+	// footer with JoinRoom button/modify or delete room button depending on the
+	// user?
+	$( "#joinBtn" ).remove();
 	
-	title= title + '<h4 class="modal-title">'+data.roomName+'</h4>';
-	desc= desc + '<p>'+ data.description + '</p>';
+	title= title + '<h3 class="modal-title text-center">'+data.roomName+'</h3>';
+	desc= desc + '<p class="description">'+ data.description + '</p>';
 	
 	
 	for (i =0; i<data.attached_vizs.length; i++){
@@ -164,18 +195,25 @@ function updateModalContent(data){
 		+'<div class=\"col-md-4\">'
 			+'<a href="#" class="img">'
 			+'<p class="center">'+  data.attached_vizs[i] +'</p>' 
-			+ '<img src=\"http://placehold.it/160x100\" style="width: 150px; height: 150px">'
+			+ '<img src=\"http://localhost:9001/'+data.attached_vizs[i]+'\" style="width: 160px; height: 120px">'
 			+ '</a>'
 		+ '</div>' ;
 	}
 	
-	//<!-- don't forget to add later : data-dismiss="modal" -->
-	//footer = footer + '<button type="button" class="btn btn-default">Join Room</button>'
-	
+	// <!-- don't forget to add later : data-dismiss="modal" -->
+	var obj={};
+	obj.vizs=[];
+	obj.vizs=data.attached_vizs;
+	obj.roomID=data.roomID;
+	console.log(obj);
+	footer ='<button type="button" class="btn btn-default" id="joinBtn" data-dismiss="modal" onclick="getVizURLs('+data.roomID+')">Join Room</button>';
+	//'+ {"vizs": data.attached_vizs, "roomID": data.roomID}+'
+	// + ',\"roomID\":'+  data.roomID
 	$('#roomModalH button').after(title);
-	$('#roomModalB #descDiv').after(desc);
-	$('#roomModalB #vizDiv').after(htmlRooms);
-	//$("#roomModalF #footerDiv").after(footer);
+	$('#roomModalB #descDiv:first').after(desc);
+	$('#vizDiv div:first').after(htmlRooms);
+			//#vizDiv:first'
+	$("#footerDiv").after(footer);
 	
 }
 
@@ -201,15 +239,19 @@ function getAllCheckedVizs() {
 		vizs.push(this.value);
 
 	});
+	//push the filter anyway
+	vizs.push("Filter");
 	return vizs;
 	console.log(vizs);
 
 }
 
+
 // uncheck checkboxes
 function uncheckCheckBoxes() {
-	$("input:checkbox").attr('checked', false);
+	$('input:checkbox[class="pack_item pull-right"]').attr('checked', false);
 	$("input:checkbox").parent().parent().addClass("border-box-black");
 	$("input:checkbox").parent().parent().removeClass("border-box-blue");
 	$("input:checkbox").siblings('.img-radio').css('opacity', '0.5');
+	
 }
