@@ -1,9 +1,59 @@
-var socket = io.connect('http://localhost:9001');
+var socket = io.connect('http://sociamvm-app-001.ecs.soton.ac.uk:9003');
+
+function setCookie(cname,cvalue,exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires=" + d.toGMTString();
+    document.cookie = cname+"="+cvalue+"; "+expires;
+    document.cookie.Domain=null;
+    console.log("Domain: " +document.cookie.Domain);
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function checkCookie() {
+    var user=getCookie("username");
+    if (user != "" && user != null) {
+        alert("Welcome again " + user);
+    } else {
+       user = prompt("Please enter your name:","");
+       if (user != "" && user != null) {
+    	   console.log("inside if");
+           setCookie("username", user, 30);
+           var u= getCookie("username");
+           console.log(u);
+       }
+    }
+}
+
+function eraseCookie(name) {
+    setCookie(name,"",-1);
+    console.log("cookie erased");
+}
 
 function initialize(){
-	
+	//eraseCookie("username");
+	checkCookie();
 	socket.emit("getActiveRooms", "");
 }
+
+//function initialize(){
+//	
+//	socket.emit("getActiveRooms", "");
+//}
 
 
 var dta_name = "";
@@ -135,7 +185,7 @@ function getVizURLs(roomID){
 
 // open new tabs with the vizs
 function open_win() {
-	
+        linkArray=['http://sociamvm-app-001.ecs.soton.ac.uk/twitterGraph/', 'http://sociamvm-app-001.ecs.soton.ac.uk/deletedTweets/', 'http://sociamvm-app-001.ecs.soton.ac.uk/msFilter/'];	
 	for (var i = 0; i < linkArray.length; i++) {
 	    // will open each link in the current window
 		window.open(linkArray[i]);
@@ -195,7 +245,7 @@ function updateModalContent(data){
 		+'<div class=\"col-md-4\">'
 			+'<a href="#" class="img">'
 			+'<p class="center">'+  data.attached_vizs[i] +'</p>' 
-			+ '<img src=\"http://localhost:9001/'+data.attached_vizs[i]+'\" style="width: 160px; height: 120px">'
+			+ '<img src=\"http://sociamvm-app-001.ecs.soton.ac.uk:9002/'+data.attached_vizs[i]+'\" style="width: 160px; height: 120px">'
 			+ '</a>'
 		+ '</div>' ;
 	}
